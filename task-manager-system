@@ -1,0 +1,121 @@
+import json
+from datetime import datetime
+import os
+
+class TaskManager:
+    def __init__(self, filename="tasks.json"):
+        self.filename = filename
+        self.tasks = self.load_tasks()
+    
+    def load_tasks(self):
+        """Carrega tarefas do arquivo JSON"""
+        if os.path.exists(self.filename):
+            with open(self.filename, 'r', encoding='utf-8') as file:
+                return json.load(file)
+        return []
+    
+    def save_tasks(self):
+        """Salva tarefas no arquivo JSON"""
+        with open(self.filename, 'w', encoding='utf-8') as file:
+            json.dump(self.tasks, file, ensure_ascii=False, indent=2)
+    
+    def add_task(self, title, description, priority="Média"):
+        """Adiciona uma nova tarefa"""
+        task = {
+            "id": len(self.tasks) + 1,
+            "title": title,
+            "description": description,
+            "priority": priority,
+            "status": "Pendente",
+            "created_at": datetime.now().strftime("%d/%m/%Y %H:%M"),
+            "completed_at": None
+        }
+        self.tasks.append(task)
+        self.save_tasks()
+        print(f"✅ Tarefa '{title}' adicionada com sucesso!")
+    
+    def list_tasks(self):
+        """Lista todas as tarefas"""
+        if not self.tasks:
+            print("📝 Nenhuma tarefa encontrada.")
+            return
+        
+        print("\n" + "="*50)
+        print("📋 LISTA DE TAREFAS")
+        print("="*50)
+        
+        for task in self.tasks:
+            status_icon = "✅" if task["status"] == "Concluída" else "⏳"
+            print(f"{status_icon} #{task['id']} - {task['title']}")
+            print(f"   📝 Descrição: {task['description']}")
+            print(f"   🎯 Prioridade: {task['priority']}")
+            print(f"   📅 Criada em: {task['created_at']}")
+            print(f"   📊 Status: {task['status']}")
+            if task["completed_at"]:
+                print(f"   🏁 Concluída em: {task['completed_at']}")
+            print("-" * 40)
+    
+    def complete_task(self, task_id):
+        """Marca uma tarefa como concluída"""
+        for task in self.tasks:
+            if task["id"] == task_id:
+                task["status"] = "Concluída"
+                task["completed_at"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+                self.save_tasks()
+                print(f"🎉 Tarefa '{task['title']}' concluída!")
+                return
+        print("❌ Tarefa não encontrada.")
+    
+    def delete_task(self, task_id):
+        """Remove uma tarefa"""
+        self.tasks = [task for task in self.tasks if task["id"] != task_id]
+        self.save_tasks()
+        print(f"🗑️ Tarefa #{task_id} removida!")
+
+def main():
+    manager = TaskManager()
+    
+    while True:
+        print("\n" + "="*40)
+        print("🎯 SISTEMA DE GERENCIAMENTO DE TAREFAS")
+        print("="*40)
+        print("1. ➕ Adicionar tarefa")
+        print("2. 📋 Listar tarefas")
+        print("3. ✅ Concluir tarefa")
+        print("4. 🗑️ Remover tarefa")
+        print("5. 🚪 Sair")
+        
+        choice = input("\n📝 Escolha uma opção: ")
+        
+        if choice == "1":
+            title = input("📌 Título da tarefa: ")
+            description = input("📝 Descrição: ")
+            priority = input("🎯 Prioridade (Alta/Média/Baixa) [Média]: ") or "Média"
+            manager.add_task(title, description, priority)
+        
+        elif choice == "2":
+            manager.list_tasks()
+        
+        elif choice == "3":
+            try:
+                task_id = int(input("🔢 ID da tarefa para concluir: "))
+                manager.complete_task(task_id)
+            except ValueError:
+                print("❌ Por favor, insira um ID válido.")
+        
+        elif choice == "4":
+            try:
+                task_id = int(input("🔢 ID da tarefa para remover: "))
+                manager.delete_task(task_id)
+            except ValueError:
+                print("❌ Por favor, insira um ID válido.")
+        
+        elif choice == "5":
+            print("👋 Saindo do sistema...")
+            break
+        
+        else:
+            print("❌ Opção inválida. Tente novamente.")
+
+if __name__ == "__main__":
+    main()
