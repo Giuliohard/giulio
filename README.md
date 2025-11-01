@@ -18,22 +18,6 @@ Sistema completo de gerenciamento de tarefas desenvolvido em Python com persist�
 - 💾 Persistência de dados em arquivo JSON
 - 📊 Status e datas de criação/conclusão
 
-## 🛠️ Tecnologias Utilizadas
-- Python 3.x
-- JSON para persistência de dados
-- Datetime para manipulação de datas
-- Programação Orientada a Objetos
-
-## 📦 Como Executar
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/task-manager-system.git
-
-# Execute o programa
-python main.py
-
-
-
 ## 🛠️ Tecnologias
 - Python
 - HTML/CSS
